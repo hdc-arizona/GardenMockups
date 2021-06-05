@@ -43,6 +43,12 @@ document.addEventListener("DOMContentLoaded", function() {
             viewModel.downloadTableData("map2");
         });
 
+        document.getElementById("downloadTable1").addEventListener('click', () => {
+            viewModel.downloadTableData("map1");
+        });
+        document.getElementById("downloadTable2").addEventListener('click', () => {
+            viewModel.downloadTableData("map2");
+        });
 
 		document.getElementById("toggleMapButton").addEventListener('click', (event) => {
 			viewModel.toggleMap2();

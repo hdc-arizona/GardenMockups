@@ -272,8 +272,10 @@ class ViewModel {
      * @param {*} map 
      * @param {*} infoBox 
      * @param {*} variableName 
+     * @param {*} colors
      */
     async populateMap(key, map, infoBox, variableName) {
+        let colors = this.colors;
         console.log("Populating map");
         let old_geojson = this.model.getGeoJson(key);
         if (old_geojson !== null) {
