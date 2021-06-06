@@ -14,7 +14,9 @@ document.addEventListener("DOMContentLoaded", function() {
         infoBox1 = viewModel.createInfoBox(map1);
         infoBox2 = viewModel.createInfoBox(map2);
         viewModel.createSearchBar(document.getElementById("searchBar1"));
+        viewModel.createSearchBar(document.getElementById("searchBar1.1"));
         viewModel.createSearchBar(document.getElementById("searchBar2"));
+        viewModel.createSearchBar(document.getElementById("searchBar2.1"));
         table1 = viewModel.createTable("table1", "tables");
         table2 = viewModel.createTable("table2", "tables");
 
@@ -24,7 +26,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 viewModel.populateLegend("map1", document.getElementById("legend1"))).then((status) =>
                 viewModel.populateTable("map1", table1));
         });
+        document.getElementById("searchBar1.1").addEventListener('awesomplete-selectcomplete', (event) => {
+            viewModel.populateMap("map1", map1, infoBox1, event.text.value).then((status) => 
+                viewModel.populateLegend("map1", document.getElementById("legend1"))).then((status) =>
+                viewModel.populateTable("map1", table1));
+        });
         document.getElementById("searchBar2").addEventListener('awesomplete-selectcomplete', (event)=>{
+            viewModel.populateMap("map2", map2, infoBox2, event.text.value).then((status) => 
+                viewModel.populateLegend("map2", document.getElementById("legend2"))).then((status) =>
+                viewModel.populateTable("map2", table2));
+        });
+        document.getElementById("searchBar2.1").addEventListener('awesomplete-selectcomplete', (event) => {
             viewModel.populateMap("map2", map2, infoBox2, event.text.value).then((status) => 
                 viewModel.populateLegend("map2", document.getElementById("legend2"))).then((status) =>
                 viewModel.populateTable("map2", table2));
