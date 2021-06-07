@@ -124,12 +124,9 @@ class Model {
         const response2 = await fetch("https://src.cals.arizona.edu/api/v1/scrutinizer/measurements?variable=" + variable2);
         const data2 = await response2.json();
         let data = [].concat(data1, data2);
-        console.log(data);
         this.originalDataLists[key] = data;
         await this._createBlockData(key, data);
-        await this._createTractDataMap(key, data);
-        console.log(this.blockDataLists);
-        console.log(this.tractDataMaps);
+        await this._createTractDataMap(key, data, variableName, variableName2);
     }
 
     /**
@@ -157,25 +154,35 @@ class Model {
      * in the data list should have at least the 'location_name' and 'location_type' specifiers
      * @param {} key 
      */
-    async _createTractDataMap(key, data) {
+    async _createTractDataMap(key, data, var1, var2) {
         if (!(key in this.blockDataLists)) {
             console.log("Error in getBlockDataMap, " + key + " is not present.");
             return -1;
         }
         let tractData = {};
+        let varName1 = var1.slice(2, var1.length - 1);
+        let varName2 = var2.slice(2, var2.length - 1);
         for (let i=0; i<data.length; i++) {
             if (data[i]['location_type'] === 'block_group' || data[i]['location_type'] === 'census_block') {
                 let tractId = data[i]['location_name'].slice(0, 11); // Organized as tracts, not block groups
-                let value = parseFloat(data[i]['value']);
+                let value = parseFloat(data[i]['value']); 
+                //console.log(data[i]);
                 if (!(tractId in tractData)) {
-                    tractData[tractId] = [0, 0];
+                    tractData[tractId] = [0, 0, 0, 0];
                 }
-                tractData[tractId][0] += value; // Current sum of values in the tract
-                tractData[tractId][1] += 1;     // Current num of values in the tract
+                if (data[i]['variable_name'] == varName1) {
+                    tractData[tractId][0] += value; // Current sum of values in the tract
+                    tractData[tractId][1] += 1; // Current num of values in the tract
+                }
+                if (data[i]['variable_name'] == varName2) {
+                    tractData[tractId][2] += value;
+                    tractData[tractId][3] += 1;
+                }
             }
     
         }
         this.tractDataMaps[key] = tractData;
+        console.log(this.tractDataMaps);
     }
 
     /**
