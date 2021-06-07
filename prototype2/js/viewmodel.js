@@ -4,6 +4,8 @@ class ViewModel {
         this.colors = this.model.interpolate('yellow', 'firebrick');
         // the two colors passed into this function will be the two end colors of the legend
         // and map illustration (shows the greatest and lowest level)
+        this.colors2 = this.model.interpolate('white', 'blue');
+
         try {
             this.model.fetchVariables();
         } catch (error) {
@@ -19,7 +21,6 @@ class ViewModel {
      * @param {*} mapId The id of the div that the map will attach to
      */
     createMap(mapId) {
-        console.log("Populating Map");
         let mymap = L.map(mapId).setView([34.0489, -112.0937], 7);
     
         L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -130,19 +131,17 @@ class ViewModel {
      * 
      * @param {*} key The model key for the specified visualization's data
      * @param {*} legend The div object that will have the colormapping filled out
-     * @param {*} colors array of colors that represent different amount
      */
     populateLegend(key, legend) {
         let colors = this.colors;
+        let colors2 = this.colors2;
         legend.innerHTML = "";
-        console.log("Populating Legend");
         let legendWidth = 200;
         let legendHeight = 50;
         let counts = {};
         for (var i = 0; i < colors.length; i++) {
             counts[colors[i]] = 0;
         }
-        console.log(counts);
         let tractData = this.model.getTractData(key);
         let colorMapping = this.model.getColorMapping(colors, key);
         var maxCount = 0;
@@ -159,15 +158,12 @@ class ViewModel {
         for (var i=0; i<colors.length; i++) {
             let div = document.createElement("div");
             div.style.width = width + "px";
-            console.log(counts[colors[i]]);
             div.style.height = (counts[colors[i]] / maxCount) * legendHeight + "px";
             div.style.left = width * i + "px";
             div.style.background = colors[i];
             div.className = "legendDiv";
             legend.appendChild(div);
         }
-        // let hr = document.createElement("hr");
-        // legend.appendChild(hr);
     }
 
     createTable(tableId, divId) {
@@ -221,8 +217,6 @@ class ViewModel {
         table.rows().remove();
         let data = this.model.getOriginalData(key);
 
-        // let body = table.getElementsByTagName('tbody')[0];
-        // body.innerHTML = "";
         for (let i=0; i<data.length; i++) {
             table.row.add(
                 [
@@ -231,18 +225,9 @@ class ViewModel {
                 data[i]['location_type'],
                 data[i]['location_name'],
                 data[i]['value']
-                ]); // .draw();
-            // let row = document.createElement('tr');
-            // this._addColumnValue(row, data[i]['variable_name']);
-            // this._addColumnValue(row, data[i]['variable_desc']);
-            // this._addColumnValue(row, data[i]['location_type']);
-            // this._addColumnValue(row, data[i]['location_name']);
-            // this._addColumnValue(row, data[i]['value']);
-            // body.appendChild(row);
+                ]); 
         }
         table.draw();
-        // $(table).DataTable();
-        // $('.dataTables_length').addClass('bs-select');
         return table;
     }
 
@@ -272,23 +257,26 @@ class ViewModel {
      * @param {*} map 
      * @param {*} infoBox 
      * @param {*} variableName 
-     * @param {*} colors
+     * @param {*} variableName2
      */
-    async populateMap(key, map, infoBox, variableName) {
+    async populateMap(key, map, infoBox, variableName, variableName2) {
         let colors = this.colors;
-        console.log("Populating map");
+        let colors2 = this.colors2;
         let old_geojson = this.model.getGeoJson(key);
         if (old_geojson !== null) {
             map.removeLayer(old_geojson);
         }
         try {
-            await this.model.fetchData(key, variableName).then((response) => {
+            await this.model.fetchData(key, variableName, variableName2).then((response) => {
                 let colorMapping = this.model.getColorMapping(colors, key);
+                let colorMapping2 = this.model.getColorMapping(colors2, key);
                 let tractData = this.model.getTractData(key);
+
                 let parseFeature = this._parseFeature(tractData, colorMapping);
                 let style = this._style(parseFeature);
                 infoBox.update = this._update(tractData, this.model.getUnits(variableName));
                 let highlightFeature = this._highlightFeature(infoBox);
+
                 var geojson;
                 let resetHighlight = function(e) {
                     geojson.resetStyle(e.target);
@@ -302,7 +290,7 @@ class ViewModel {
         });
             
         } catch(error) {
-            console.log("Could not load " + variableName + " data from scrutinizer");
+            console.log("Could not load " + variableName + " + " + variableName2 + " data from scrutinizer");
             return -1;
         }
     }

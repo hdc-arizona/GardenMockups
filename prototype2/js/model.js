@@ -20,7 +20,6 @@ class Model {
     }
 
     getUnits(variableName) {
-        console.log(this.variableMap[variableName]);
         return this.variableMap[variableName]['unit'];
     }
 
@@ -37,8 +36,6 @@ class Model {
     }
 
     getTractData(key) {
-        console.log("Getting tract data...");
-        console.log(this.tractDataMaps);
         if (key in this.tractDataMaps)
             return this.tractDataMaps[key];
         console.log("Tract data key " + key + " not found");
@@ -116,15 +113,23 @@ class Model {
      *  originalDataLists, tractDataMaps, and blockDataLists variables under the specified
      *  key.
      * @param {} key The key that will be used to store the fetched data
-     * @param {*} variableName The name of the variable that will be fetched 
+     * @param {*} variableName The name of the variable that will be fetched
+     * @param {*} variableName2 The name of the 2nd variable that will be fetched
      */
-    async fetchData(key, variableName) {
+    async fetchData(key, variableName, variableName2) {
         let variable = this.variableMap[variableName]['name'];
+        let variable2 = this.variableMap[variableName2]['name'];
         const response = await fetch("https://src.cals.arizona.edu/api/v1/scrutinizer/measurements?variable=" + variable);
-        const data = await response.json();
+        const data1 = await response.json();
+        const response2 = await fetch("https://src.cals.arizona.edu/api/v1/scrutinizer/measurements?variable=" + variable2);
+        const data2 = await response2.json();
+        let data = [].concat(data1, data2);
+        console.log(data);
         this.originalDataLists[key] = data;
         await this._createBlockData(key, data);
-        await this._createTractDataMap(key, data);     
+        await this._createTractDataMap(key, data);
+        console.log(this.blockDataLists);
+        console.log(this.tractDataMaps);
     }
 
     /**
@@ -142,20 +147,6 @@ class Model {
                 }
                 blockData.push(data[i]);
             } else if (data[i]['location_type'] === 'centroid' || data[i]['location_type'] === 'point') {
-                // Below is code for converting the point and centroid latitude and longitutde data into 
-                // block data. As it stands, fetching to do all of these conversion is too time intensive
-
-                // let newData = JSON.parse(JSON.stringify(data[i]));
-                // newData['location_type'] = 'block_group';
-                // let coord = data[i]['location_name'].split(",");
-                // await fetch("https://geo.fcc.gov/api/census/area?lat=" + coord[0] + "&lon=" + coord[1])
-                //     .then((response) => response.json())
-                //     .then((response) => {
-                //         let value = response['results'][0]['block_fips'];
-                //         value = value.slice(0, 12);
-                //         newData['location_name'] = value;
-                //         blockData.push(newData);
-                //     });
             }
         }
         this.blockDataLists[key] = blockData;
@@ -167,7 +158,6 @@ class Model {
      * @param {} key 
      */
     async _createTractDataMap(key, data) {
-        console.log("Creating Tract Data!");
         if (!(key in this.blockDataLists)) {
             console.log("Error in getBlockDataMap, " + key + " is not present.");
             return -1;
