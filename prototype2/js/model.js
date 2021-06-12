@@ -48,14 +48,14 @@ class Model {
         let max = minmax[1];
         let diff = max - min;
         return function (d) {
-            return d > (min + diff * 7.0 / 8.0) ? colors[7] :
-                   d > (min + diff * 6.0 / 8.0) ? colors[6] :
-                   d > (min + diff * 5.0 / 8.0) ? colors[5] :
-                   d > (min + diff * 4.0 / 8.0) ? colors[4] :
-                   d > (min + diff * 3.0 / 8.0) ? colors[3] :
-                   d > (min + diff * 2.0 / 8.0) ? colors[2] :
-                   d > (min + diff * 1.0 / 8.0) ? colors[1] :
-                                                  colors[0];
+            var i = 7;
+            while (i >= 0) {
+                if (d >= (min + diff * i / 8.0)) {
+                    return colors[i];
+                } else {
+                    i--;
+                }
+            }
         }
     }
 
@@ -80,10 +80,11 @@ class Model {
     /**
      * Return an array of colors that represent different level in the map/legend based on
      * the darkest and lightest color
+     * @param {*} minColor
      * @param {*} maxColor
      */
-    interpolate(maxColor, minColor) {
-        var colorInterpolator = d3.interpolateRgb(maxColor, minColor);
+    interpolate(minColor, maxColor) {
+        var colorInterpolator = d3.interpolateRgb(minColor, maxColor);
         var steps = 8;
         var colors = d3.range(0, (1 + 1 / steps), 1 / (steps - 1)).map(function (d) {
             return colorInterpolator(d)
@@ -168,7 +169,8 @@ class Model {
                 let value = parseFloat(data[i]['value']); 
                 //console.log(data[i]);
                 if (!(tractId in tractData)) {
-                    tractData[tractId] = [0, 0, 0, 0];
+                    tractData[tractId] = [0, 0, 0, 0]; // for each tract, indexes 0 and 1 are the amount and count of 
+                                                        // variable 1, and indexes 2 and 3 are those of variable 2
                 }
                 if (data[i]['variable_name'] == varName1) {
                     tractData[tractId][0] += value; // Current sum of values in the tract
@@ -191,7 +193,7 @@ class Model {
      */
     _getMinMax(key) {
         if (!(key in this.tractDataMaps)) {
-            return [-1, -1];
+            return [-1, -1, -1, -1];
         }
         let min = Number.MAX_VALUE;
         let max = Number.MIN_SAFE_INTEGER;
