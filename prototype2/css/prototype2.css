@@ -58,32 +58,33 @@ ul, li{
     border-style: solid;
 }
 .bottom-dash {
-    width: 550px;
     display: flex;
 }
 
-#download1 {
-    /* display: inline-block; */
+.legendWrapper {
+    float: right;
 }
-#legend1, #legend2 {
-    /* display: inline-block; */
-    position: relative;
-    height: 60px;
+
+.grid {
     width: 200px;
-    margin-left: 50px;
-    /* margin-right: 100px;
-    margin-top: 10px; */
+    height: 100px;
+    display: grid;
+    grid-gap: 0px;
+    grid-template-columns: auto auto auto;
 }
 
-.legend {
-    display: flex;
-    width: 50%;
+.legendLabel{
+    display:flex;
 }
 
-.legendDiv {
-    bottom: 0px;
-    position: absolute;
-    bottom: 0px;
+.var1label {
+    margin-top: 10px;
+    margin-left: 140px;
+}
+
+.var2label {
+    margin-top: 40px;
+    margin-right: 10px;
 }
 
 h1 {

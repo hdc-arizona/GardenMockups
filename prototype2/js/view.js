@@ -7,28 +7,29 @@ var infoBox2 = null;
 var viewModel = null;
 
 
-document.addEventListener("DOMContentLoaded", function() {
-        viewModel = new ViewModel();
-        map1 = viewModel.createMap("map1");
-        map2 = viewModel.createMap("map2");
-        infoBox1 = viewModel.createInfoBox(map1);
-        infoBox2 = viewModel.createInfoBox(map2);
-        viewModel.createSearchBar(document.getElementById("searchBar1"));
-        viewModel.createSearchBar(document.getElementById("searchBar1.1"));
-        viewModel.createSearchBar(document.getElementById("searchBar2"));
-        viewModel.createSearchBar(document.getElementById("searchBar2.1"));
-        table1 = viewModel.createTable("table1", "tables");
-        table2 = viewModel.createTable("table2", "tables");
+document.addEventListener("DOMContentLoaded", function () {
+    viewModel = new ViewModel();
+    map1 = viewModel.createMap("map1");
+    map2 = viewModel.createMap("map2");
+    infoBox1 = viewModel.createInfoBox(map1);
+    infoBox2 = viewModel.createInfoBox(map2);
+    viewModel.createSearchBar(document.getElementById("searchBar1"));
+    viewModel.createSearchBar(document.getElementById("searchBar1.1"));
+    viewModel.createSearchBar(document.getElementById("searchBar2"));
+    viewModel.createSearchBar(document.getElementById("searchBar2.1"));
+    table1 = viewModel.createTable("table1", "tables");
+    table2 = viewModel.createTable("table2", "tables");
 
-        // View UI Listeners
+    // View UI Listeners
+    viewModel.populateLegend("map1", document.getElementById("legend1"));
+    viewModel.populateLegend("map2", document.getElementById("legend2"));
 
         document.getElementById("search1").addEventListener('click', (event) => {
           var var1 = document.getElementById("searchBar1").value;
           var var2 = document.getElementById("searchBar1.1").value;
             if (var1 != "" && var2 != "") {
                 viewModel.populateMap("map1", map1, infoBox1, var1, var2).then((status) =>
-                    viewModel.populateLegend("map1", document.getElementById("legend1"))).then((status) =>
-                        viewModel.populateTable("map1", table1));
+                    viewModel.populateTable("map1", table1));
             }
         });
 
@@ -37,8 +38,7 @@ document.addEventListener("DOMContentLoaded", function() {
           var var4 = document.getElementById("searchBar2.1").value;
             if (var3 != "" && var4 != "") {
                 viewModel.populateMap("map2", map2, infoBox2, var3, var4).then((status) =>
-                    viewModel.populateLegend("map2", document.getElementById("legend2"))).then((status) =>
-                        viewModel.populateTable("map2", table2));
+                    viewModel.populateTable("map2", table2));
             }
         });
    

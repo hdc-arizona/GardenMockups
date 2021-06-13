@@ -1,10 +1,9 @@
 class ViewModel {
     constructor() {
         this.model = new Model();
-        this.colors = this.model.interpolate('yellow', 'firebrick');
+        this.colors = this.model.interpolate('white', 'red', 'white', 'blue');
         // the two colors passed into this function will be the two end colors of the legend
         // and map illustration (shows the greatest and lowest level)
-        this.colors2 = this.model.interpolate('white', 'blue');
 
         try {
             this.model.fetchVariables();
@@ -134,34 +133,19 @@ class ViewModel {
      */
     populateLegend(key, legend) {
         let colors = this.colors;
-        let colors2 = this.colors2;
+
         legend.innerHTML = "";
-        let legendWidth = 200;
-        let legendHeight = 50;
-        let counts = {};
+        let legendWidth = legend.width;
+        let legendHeight = legend.height;
+
+        let width = (legendWidth) / 3;
         for (var i = 0; i < colors.length; i++) {
-            counts[colors[i]] = 0;
-        }
-        let tractData = this.model.getTractData(key);
-        let colorMapping = this.model.getColorMapping(colors, key);
-        var maxCount = 0;
-    
-        for (let tractId in tractData) {
-            let color = colorMapping(tractData[tractId][0] / tractData[tractId][1]);
-            counts[color] += 1;
-            if (maxCount < counts[color])
-                maxCount = counts[color];
-        }
-    
-        var convertHeight = (count) => (count/maxCount) * legendHeight;
-        let width = (legendWidth - 20) / 8;
-        for (var i=0; i<colors.length; i++) {
             let div = document.createElement("div");
             div.style.width = width + "px";
-            div.style.height = (counts[colors[i]] / maxCount) * legendHeight + "px";
+            div.style.height = legendHeight / 3 + "px";
             div.style.left = width * i + "px";
             div.style.background = colors[i];
-            div.className = "legendDiv";
+            div.className = "cell";
             legend.appendChild(div);
         }
     }
@@ -261,7 +245,6 @@ class ViewModel {
      */
     async populateMap(key, map, infoBox, variableName, variableName2) {
         let colors = this.colors;
-        let colors2 = this.colors2;
         let old_geojson = this.model.getGeoJson(key);
         if (old_geojson !== null) {
             map.removeLayer(old_geojson);
@@ -269,7 +252,6 @@ class ViewModel {
         try {
             await this.model.fetchData(key, variableName, variableName2).then((response) => {
                 let colorMapping = this.model.getColorMapping(colors, key);
-                let colorMapping2 = this.model.getColorMapping(colors2, key);
                 let tractData = this.model.getTractData(key);
 
                 let parseFeature = this._parseFeature(tractData, colorMapping);
@@ -305,7 +287,7 @@ class ViewModel {
         return function(feature) {
             let string = "" + feature.properties['STATE'] + feature.properties['COUNTY'] + feature.properties['TRACT']; 
             if (string in tractData) {
-                return colorMapping(tractData[string][0] / tractData[string][1]);
+                return colorMapping(tractData[string][0] / tractData[string][1], tractData[string][2] / tractData[string][3]);
             }
             return 0;
         }
@@ -329,7 +311,7 @@ class ViewModel {
             if (props) {
                 let key = props['STATE'] + props['COUNTY'] + props['TRACT'];
                 this._div.innerHTML = '<h6>Data Value</h6>' +  (key in tractData ?
-                    '<b>' + tractData[key][0].toFixed(2) + ' ' + units
+                    '<b>Variable1: ' + tractData[key][0].toFixed(2) + ' ' + units + '<br/>Variable2: ' + tractData[key][2].toFixed(2) + ' ' + units
                     : 'Hover over a tract');
             }
         };

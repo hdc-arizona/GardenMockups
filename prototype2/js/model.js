@@ -44,16 +44,36 @@ class Model {
 
     getColorMapping(colors, key) {
         let minmax = this._getMinMax(key);
-        let min = minmax[0];
-        let max = minmax[1];
-        let diff = max - min;
-        return function (d) {
-            var i = 7;
-            while (i >= 0) {
-                if (d >= (min + diff * i / 8.0)) {
-                    return colors[i];
+        let min1 = minmax[0];
+        let max1 = minmax[1];
+        let min2 = minmax[2];
+        let max2 = minmax[3];
+        let diff1 = max1 - min1;
+        let diff2 = max2 - min2;
+        return function (d1, d2) {
+            if (d1 >= (min1 + diff1 * 2.0 / 3.0)) {
+                if (d2 >= (min2 + diff2 * 2.0 / 3.0)) {
+                    return colors[2];
+                } else if (d2 >= (min2 + diff2 * 1.0 / 3.0)) {
+                    return colors[5];
                 } else {
-                    i--;
+                    return colors[8];
+                }
+            } else if (d1 >= (min1 + diff1 * 1.0 / 3.0)) {
+                if (d2 >= (min2 + diff2 * 2.0 / 3.0)) {
+                    return colors[1];
+                } else if (d2 >= (min2 + diff2 * 1.0 / 3.0)) {
+                    return colors[4];
+                } else {
+                    return colors[7];
+                }
+            } else {
+                if (d2 >= (min2 + diff2 * 2.0 / 3.0)) {
+                    return colors[0];
+                } else if (d2 >= (min2 + diff2 * 1.0 / 3.0)) {
+                    return colors[3];
+                } else {
+                    return colors[6];
                 }
             }
         }
@@ -78,14 +98,66 @@ class Model {
     }
 
     /**
-     * Return an array of colors that represent different level in the map/legend based on
-     * the darkest and lightest color
+     * Return an array of 9 colors that represent different level in the map/legend based on
+     * the darkest and lightest color for the first and second variable. 
+     * Each group of 3 colors will be a row in the legend for a bivariate colormap, from bottom to top.
+     * The horizontal direction will be of increasing first variable, and the vertical direction will 
+     * be of increasing second variable
+     * 
+     * For example, min1=white, max1=red, min2=white, max2=blue
+     * The array will be [white, lightred, red, lightblue, lightblue+lightred, lightblue+red, blue, blue+lightred, blue+red]
+     * The legend will look like:
+     * blue - blue+lightred - blue+red
+     * lightblue - lightblue+lightred - lightblue+red
+     * white - lightred - red
      * @param {*} minColor
      * @param {*} maxColor
+     * @param {*} minColor2
+     * @param {*} maxColor2
      */
-    interpolate(minColor, maxColor) {
+    interpolate(minColor1, maxColor1, minColor2, maxColor2) {
+        let colors = [];
+
+        //colors for bottom row
+        var colors1 = this._interpolateHelper(minColor1, maxColor1, 3);
+
+        //colors for leftmost column
+        var colors2 = this._interpolateHelper(minColor2, maxColor2, 3);
+
+        // midde color of middle row
+        var colors3 = this._interpolateHelper(colors1[1], colors2[1], 3);
+
+        // last color of second row
+        var colors4 = this._interpolateHelper(colors1[2], colors2[1], 3);
+
+        // middle color of top row
+        var colors5 = this._interpolateHelper(colors1[1], colors2[2], 3);
+
+        // last color of top row
+        var colors6 = this._interpolateHelper(colors1[2], colors2[2], 3);
+
+        // pushing in order of populating the legend (left to right, top to bottom)
+        colors.push(colors2[2]);
+        colors.push(colors5[1]);
+        colors.push(colors6[1]);
+        colors.push(colors2[1]);
+        colors.push(colors3[1]);
+        colors.push(colors4[1]);
+        colors.push(colors2[0]);
+        colors.push(colors1[1]);
+        colors.push(colors1[2]);
+
+        return colors;
+    }
+
+    /**
+     * Helper for diving each pair of colors
+     * @param {*} minColor
+     * @param {*} maxColor
+     * @param {*} steps
+     */
+    _interpolateHelper(minColor, maxColor, steps) {
         var colorInterpolator = d3.interpolateRgb(minColor, maxColor);
-        var steps = 8;
         var colors = d3.range(0, (1 + 1 / steps), 1 / (steps - 1)).map(function (d) {
             return colorInterpolator(d)
         });
@@ -167,7 +239,6 @@ class Model {
             if (data[i]['location_type'] === 'block_group' || data[i]['location_type'] === 'census_block') {
                 let tractId = data[i]['location_name'].slice(0, 11); // Organized as tracts, not block groups
                 let value = parseFloat(data[i]['value']); 
-                //console.log(data[i]);
                 if (!(tractId in tractData)) {
                     tractData[tractId] = [0, 0, 0, 0]; // for each tract, indexes 0 and 1 are the amount and count of 
                                                         // variable 1, and indexes 2 and 3 are those of variable 2
@@ -184,29 +255,37 @@ class Model {
     
         }
         this.tractDataMaps[key] = tractData;
-        console.log(this.tractDataMaps);
     }
 
     /**
-     * Gets the minimum and maximum data values from the tractMap under the specified key.
+     * Gets the minimum and maximum data values for each variable from the tractMap under the specified key.
      * @param {*} key 
      */
     _getMinMax(key) {
         if (!(key in this.tractDataMaps)) {
             return [-1, -1, -1, -1];
         }
-        let min = Number.MAX_VALUE;
-        let max = Number.MIN_SAFE_INTEGER;
+        let min1 = Number.MAX_VALUE;
+        let max1 = Number.MIN_SAFE_INTEGER;
+        let min2 = Number.MAX_VALUE;
+        let max2 = Number.MIN_SAFE_INTEGER;
         let tractMap = this.tractDataMaps[key];
         for (var tractId in tractMap) {
-            let avg = tractMap[tractId][0] / tractMap[tractId][1];
-            if (avg < min) {
-                min = avg;
+            let avg1 = tractMap[tractId][0] / tractMap[tractId][1];
+            if (avg1 < min1) {
+                min1 = avg1;
             }
-            if (max < avg) {
-                max = avg;
+            if (max1 < avg1) {
+                max1 = avg1;
+            }
+            let avg2 = tractMap[tractId][2] / tractMap[tractId][3];
+            if (avg2 < min2) {
+                min2 = avg2;
+            }
+            if (max2 < avg2) {
+                max2 = avg2;
             }
         }
-        return [min, max];
+        return [min1, max1, min2, max2];
     }
 }
