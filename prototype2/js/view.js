@@ -27,19 +27,17 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("search1").addEventListener('click', (event) => {
           var var1 = document.getElementById("searchBar1").value;
           var var2 = document.getElementById("searchBar1.1").value;
-            if (var1 != "" && var2 != "") {
-                viewModel.populateMap("map1", map1, infoBox1, var1, var2).then((status) =>
-                    viewModel.populateTable("map1", table1));
-            }
+            viewModel.populateMap("map1", map1, infoBox1, var1, var2).then((status) =>
+                viewModel.populateTable("map1", table1));
+           
         });
 
         document.getElementById("search2").addEventListener('click', (event) => {
           var var3 = document.getElementById("searchBar2").value;
           var var4 = document.getElementById("searchBar2.1").value;
-            if (var3 != "" && var4 != "") {
-                viewModel.populateMap("map2", map2, infoBox2, var3, var4).then((status) =>
-                    viewModel.populateTable("map2", table2));
-            }
+          viewModel.populateMap("map2", map2, infoBox2, var3, var4).then((status) =>
+                viewModel.populateTable("map2", table2));
+            
         });
    
         document.getElementById("download1").addEventListener('click', () => {

@@ -46,37 +46,50 @@ class Model {
         let minmax = this._getMinMax(key);
         let min1 = minmax[0];
         let max1 = minmax[1];
+        let diff1 = max1 - min1;
         let min2 = minmax[2];
         let max2 = minmax[3];
-        let diff1 = max1 - min1;
-        let diff2 = max2 - min2;
-        return function (d1, d2) {
-            if (d1 >= (min1 + diff1 * 2.0 / 3.0)) {
-                if (d2 >= (min2 + diff2 * 2.0 / 3.0)) {
-                    return colors[2];
-                } else if (d2 >= (min2 + diff2 * 1.0 / 3.0)) {
-                    return colors[5];
+        if (min2 != 0 && max2 != 0) {
+            let diff2 = max2 - min2;
+            return function (d1, d2) {
+                if (d1 >= (min1 + diff1 * 2.0 / 3.0)) {
+                    if (d2 >= (min2 + diff2 * 2.0 / 3.0)) {
+                        return colors[2];
+                    } else if (d2 >= (min2 + diff2 * 1.0 / 3.0)) {
+                        return colors[5];
+                    } else {
+                        return colors[8];
+                    }
+                } else if (d1 >= (min1 + diff1 * 1.0 / 3.0)) {
+                    if (d2 >= (min2 + diff2 * 2.0 / 3.0)) {
+                        return colors[1];
+                    } else if (d2 >= (min2 + diff2 * 1.0 / 3.0)) {
+                        return colors[4];
+                    } else {
+                        return colors[7];
+                    }
                 } else {
-                    return colors[8];
+                    if (d2 >= (min2 + diff2 * 2.0 / 3.0)) {
+                        return colors[0];
+                    } else if (d2 >= (min2 + diff2 * 1.0 / 3.0)) {
+                        return colors[3];
+                    } else {
+                        return colors[6];
+                    }
                 }
-            } else if (d1 >= (min1 + diff1 * 1.0 / 3.0)) {
-                if (d2 >= (min2 + diff2 * 2.0 / 3.0)) {
-                    return colors[1];
-                } else if (d2 >= (min2 + diff2 * 1.0 / 3.0)) {
-                    return colors[4];
+            }
+        } else {
+            return function (d1, d2) {
+                if (d1 >= (min1 + diff1 * 2.0 / 3.0)) {
+                     return colors[8];
+                } else if (d1 >= (min1 + diff1 * 1.0 / 3.0)) {
+                     return colors[7];
                 } else {
-                    return colors[7];
-                }
-            } else {
-                if (d2 >= (min2 + diff2 * 2.0 / 3.0)) {
-                    return colors[0];
-                } else if (d2 >= (min2 + diff2 * 1.0 / 3.0)) {
-                    return colors[3];
-                } else {
-                    return colors[6];
+                     return colors[6];
                 }
             }
         }
+        
     }
 
     getGeoJson(key) {
@@ -191,12 +204,15 @@ class Model {
      */
     async fetchData(key, variableName, variableName2) {
         let variable = this.variableMap[variableName]['name'];
-        let variable2 = this.variableMap[variableName2]['name'];
         const response = await fetch("https://src.cals.arizona.edu/api/v1/scrutinizer/measurements?variable=" + variable);
         const data1 = await response.json();
-        const response2 = await fetch("https://src.cals.arizona.edu/api/v1/scrutinizer/measurements?variable=" + variable2);
-        const data2 = await response2.json();
-        let data = [].concat(data1, data2);
+        let data = data1;
+        if (variableName2 != "") {
+            let variable2 = this.variableMap[variableName2]['name'];
+            const response2 = await fetch("https://src.cals.arizona.edu/api/v1/scrutinizer/measurements?variable=" + variable2);
+            const data2 = await response2.json();
+            data = [].concat(data1, data2);
+        }
         this.originalDataLists[key] = data;
         await this._createBlockData(key, data);
         await this._createTractDataMap(key, data, variableName, variableName2);
@@ -278,12 +294,17 @@ class Model {
             if (max1 < avg1) {
                 max1 = avg1;
             }
-            let avg2 = tractMap[tractId][2] / tractMap[tractId][3];
-            if (avg2 < min2) {
-                min2 = avg2;
-            }
-            if (max2 < avg2) {
-                max2 = avg2;
+            if (tractMap[tractId][2] != 0 && tractMap[tractId][3] != 0) {
+                let avg2 = tractMap[tractId][2] / tractMap[tractId][3];
+                if (avg2 < min2) {
+                    min2 = avg2;
+                }
+                if (max2 < avg2) {
+                    max2 = avg2;
+                }
+            } else {
+                min2 = 0;
+                max2 = 0;
             }
         }
         return [min1, max1, min2, max2];
