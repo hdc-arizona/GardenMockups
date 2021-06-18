@@ -116,6 +116,7 @@ class ViewModel {
             csv += data[i]['location_type'] + ',';
             csv += data[i]['location_name'] + ',';
             csv += data[i]['value'] + "\n";
+
         }
         var hiddenElement = document.createElement('a');
         hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);

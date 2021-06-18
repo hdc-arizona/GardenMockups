@@ -93,6 +93,7 @@ class Model {
                 }
             }
         }
+
     }
 
     getGeoJson(key) {
@@ -100,7 +101,7 @@ class Model {
             return this.geojsonInstances[key];
         }
         return null;
-    } 
+    }
 
     setGeoJson(key, geojson) {
         this.geojsonInstances[key] = geojson;
@@ -181,12 +182,12 @@ class Model {
     }
 
     /**
-    * Fetches the scrutinizer variable metadata and stores it in the variableDesc and variableMap
-    * variables.
-    * variableDesc is a list in this format for each variable: description (name)
-    * variableMap has each value of variableDesc as a key mapped to the metadata pulled from the
-    * scrutinizer
-    */
+     * Fetches the scrutinizer variable metadata and stores it in the variableDesc and variableMap
+     * variables.
+     * variableDesc is a list in this format for each variable: description (name)
+     * variableMap has each value of variableDesc as a key mapped to the metadata pulled from the
+     * scrutinizer
+     */
     async fetchVariables() {
         const response = await fetch("https://src.cals.arizona.edu/api/v1/scrutinizer/variables");
         const variables = await response.json();
@@ -257,7 +258,7 @@ class Model {
         for (let i = 0; i < data.length; i++) {
             if (data[i]['location_type'] === 'block_group' || data[i]['location_type'] === 'census_block') {
                 let tractId = data[i]['location_name'].slice(0, 11); // Organized as tracts, not block groups
-                let value = parseFloat(data[i]['value']); 
+                let value = parseFloat(data[i]['value']);
                 if (!(tractId in tractData)) {
                     tractData[tractId] = [0, 0, 0, 0]; // for each tract, indexes 0 and 1 are the amount and count of 
                     // variable 1, and indexes 2 and 3 are those of variable 2
