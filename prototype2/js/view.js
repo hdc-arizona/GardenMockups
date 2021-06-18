@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function() {
         viewModel.populateLegend("map1", document.getElementById("legend1"));
         viewModel.populateLegend("map2", document.getElementById("legend2"));
 
+
         document.getElementById("search1").addEventListener('click', (event) => {
             var var1 = document.getElementById("searchBar1").value;
             var var2 = document.getElementById("searchBar1.1").value;
@@ -41,19 +42,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 );
             }
         });
-        
+   
         document.getElementById("download1").addEventListener('click', () => {
             viewModel.downloadBlockData("map1");
         });
         document.getElementById("download2").addEventListener('click', () => {
             viewModel.downloadBlockData("map2");
 		});
-		document.getElementById("downloadTable1").addEventListener('click', () => {
-            viewModel.downloadTableData("map1");
-        });
-        document.getElementById("downloadTable2").addEventListener('click', () => {
-            viewModel.downloadTableData("map2");
-        });
 
         document.getElementById("downloadTable1").addEventListener('click', () => {
             viewModel.downloadTableData("map1");
@@ -101,9 +96,5 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	
 		viewModel.resize();
-		
-		
-        
-        
-        
+
 });

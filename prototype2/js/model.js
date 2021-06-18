@@ -24,7 +24,6 @@ class Model {
     }
 
     getUnits(variableName) {
-        console.log(this.variableMap[variableName]);
         return this.variableMap[variableName]['unit'];
     }
 
@@ -41,8 +40,6 @@ class Model {
     }
 
     getTractData(key) {
-        console.log("Getting tract data...");
-        console.log(this.tractDataMaps);
         if (key in this.tractDataMaps)
             return this.tractDataMaps[key];
         console.log("Tract data key " + key + " not found");
@@ -96,7 +93,6 @@ class Model {
                 }
             }
         }
-
     }
 
     getGeoJson(key) {
@@ -261,7 +257,7 @@ class Model {
         for (let i = 0; i < data.length; i++) {
             if (data[i]['location_type'] === 'block_group' || data[i]['location_type'] === 'census_block') {
                 let tractId = data[i]['location_name'].slice(0, 11); // Organized as tracts, not block groups
-                let value = parseFloat(data[i]['value']);
+                let value = parseFloat(data[i]['value']); 
                 if (!(tractId in tractData)) {
                     tractData[tractId] = [0, 0, 0, 0]; // for each tract, indexes 0 and 1 are the amount and count of 
                     // variable 1, and indexes 2 and 3 are those of variable 2

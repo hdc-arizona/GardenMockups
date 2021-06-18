@@ -116,7 +116,6 @@ class ViewModel {
             csv += data[i]['location_type'] + ',';
             csv += data[i]['location_name'] + ',';
             csv += data[i]['value'] + "\n";
-
         }
         var hiddenElement = document.createElement('a');
         hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
@@ -164,7 +163,6 @@ class ViewModel {
         let minMax = this.model.getMinMax(key);
         let max1 = minMax[1].toFixed(5);
         let max2 = minMax[3].toFixed(5);
-        console.log(max1 + " " + max2);
         if (max2 <= 0) {
             div2.innerHTML = max1;
             div1.innerHTML = "N/A";
