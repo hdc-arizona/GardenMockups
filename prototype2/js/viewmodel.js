@@ -1,9 +1,10 @@
 class ViewModel {
     constructor() {
         this.model = new Model();
-        this.colors = this.model.interpolate('yellow', 'firebrick');
+        this.colors = this.model.interpolate('white', 'red', 'white', 'blue');
         // the two colors passed into this function will be the two end colors of the legend
         // and map illustration (shows the greatest and lowest level)
+
         try {
             this.model.fetchVariables();
         } catch (error) {
@@ -14,12 +15,11 @@ class ViewModel {
     }
 
     /**
-      * Creates an empty map using the leaflet API
-      * 
-      * @param {*} mapId The id of the div that the map will attach to
-      */
+     * Creates an empty map using the leaflet API
+     * 
+     * @param {*} mapId The id of the div that the map will attach to
+     */
     createMap(mapId) {
-        console.log("Populating Map");
         let mymap = L.map(mapId).setView([34.0489, -112.0937], 7);
 
         L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -48,7 +48,7 @@ class ViewModel {
             this.update();
             return this._div;
         };
-        info.update = function(props) { this._div.innerHTML = '<h6>No Data Present.</h6>'; }
+        info.update = function (props) { this._div.innerHTML = '<h6>No Data Present.</h6>'; }
         info.addTo(map);
         return info;
     }
@@ -77,15 +77,15 @@ class ViewModel {
             return;
         }
         let csv = "Row,GeoId,StateFP,StateName,CountyFP,CountyName,TractCE,BlockgroupCE,Medium,Value\n";
-        for (let i=0; i<data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
             let geoId = data[i]['location_name'];
-            csv += (i+1) + ',';
+            csv += (i + 1) + ',';
             csv += '="' + geoId + '",';
-            csv += '="' + geoId.slice(0,2) + '",';
-            csv += '="' + fipsToState[geoId.slice(0,2)] + '",';
-            csv += '="' + geoId.slice(2,5) + '",';
-            csv += '="' + fipsToCounty[geoId.slice(2,5)] + '",';
-            csv += '="' + geoId.slice(5,11) + '",';
+            csv += '="' + geoId.slice(0, 2) + '",';
+            csv += '="' + fipsToState[geoId.slice(0, 2)] + '",';
+            csv += '="' + geoId.slice(2, 5) + '",';
+            csv += '="' + fipsToCounty[geoId.slice(2, 5)] + '",';
+            csv += '="' + geoId.slice(5, 11) + '",';
             csv += '="' + geoId[11] + '",';
             csv += '="' + data[i]['medium'] + '",';
             csv += data[i]['value'] + "\n";
@@ -106,7 +106,7 @@ class ViewModel {
         let data = this.model.getBlockData(key);
         let id = key[key.length - 1];
         if (data.length === 0) {
-            alert("table"+id+" has no data to download.");
+            alert("table" + id + " has no data to download.");
             return;
         }
         let csv = "Name,Desc,Location Type,Location,Value\n";
@@ -116,7 +116,7 @@ class ViewModel {
             csv += data[i]['location_type'] + ',';
             csv += data[i]['location_name'] + ',';
             csv += data[i]['value'] + "\n";
-            
+
         }
         var hiddenElement = document.createElement('a');
         hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
@@ -130,44 +130,49 @@ class ViewModel {
      * 
      * @param {*} key The model key for the specified visualization's data
      * @param {*} legend The div object that will have the colormapping filled out
-     * @param {*} colors array of colors that represent different amount
      */
     populateLegend(key, legend) {
         let colors = this.colors;
+
         legend.innerHTML = "";
-        console.log("Populating Legend");
-        let legendWidth = 200;
-        let legendHeight = 50;
-        let counts = {};
-        for (var i = 0; i < colors.length; i++) {
-            counts[colors[i]] = 0;
-        }
-        console.log(counts);
-        let tractData = this.model.getTractData(key);
-        let colorMapping = this.model.getColorMapping(colors, key);
-        var maxCount = 0;
+        let legendWidth = legend.width;
+        let legendHeight = legend.height;
 
-        for (let tractId in tractData) {
-            let color = colorMapping(tractData[tractId][0] / tractData[tractId][1]);
-            counts[color] += 1;
-            if (maxCount < counts[color])
-                maxCount = counts[color];
-        }
-
-        var convertHeight = (count) => (count / maxCount) * legendHeight;
-        let width = (legendWidth - 20) / 8;
+        let width = (legendWidth) / 3;
         for (var i = 0; i < colors.length; i++) {
             let div = document.createElement("div");
             div.style.width = width + "px";
-            console.log(counts[colors[i]]);
-            div.style.height = (counts[colors[i]] / maxCount) * legendHeight + "px";
+            div.style.height = legendHeight / 3 + "px";
             div.style.left = width * i + "px";
             div.style.background = colors[i];
-            div.className = "legendDiv";
+            div.className = "cell";
             legend.appendChild(div);
         }
-        // let hr = document.createElement("hr");
-        // legend.appendChild(hr);
+    }
+
+
+    /**
+     * Update the legend to show scale
+     * 
+     * @param {*} key The model key for the specified visualization's data
+     * @param {*} div1 The placeholder for y-axis (variable 2 max valuelabel)
+     * @param {*} div2 The placeholder for x-axis (variable 1 max valuelabel)
+     */
+    updateLegend(key, div1, div2) {
+        div2.innerHTML = "0";
+        div1.innerHTML = "0";
+        let minMax = this.model.getMinMax(key);
+        let max1 = minMax[1].toFixed(5);
+        let max2 = minMax[3].toFixed(5);
+        console.log(max1 + " " + max2);
+        if (max2 <= 0) {
+            div2.innerHTML = max1;
+            div1.innerHTML = "N/A";
+        }
+        else {
+            div2.innerHTML = max1;
+            div1.innerHTML = max2;
+        }
     }
 
     createTable(tableId, divId) {
@@ -221,28 +226,17 @@ class ViewModel {
         table.rows().remove();
         let data = this.model.getOriginalData(key);
 
-        // let body = table.getElementsByTagName('tbody')[0];
-        // body.innerHTML = "";
-        for (let i=0; i<data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
             table.row.add(
                 [
-                data[i]['variable_name'],
-                data[i]['variable_desc'],
-                data[i]['location_type'],
-                data[i]['location_name'],
-                data[i]['value']
-                ]); // .draw();
-            // let row = document.createElement('tr');
-            // this._addColumnValue(row, data[i]['variable_name']);
-            // this._addColumnValue(row, data[i]['variable_desc']);
-            // this._addColumnValue(row, data[i]['location_type']);
-            // this._addColumnValue(row, data[i]['location_name']);
-            // this._addColumnValue(row, data[i]['value']);
-            // body.appendChild(row);
+                    data[i]['variable_name'],
+                    data[i]['variable_desc'],
+                    data[i]['location_type'],
+                    data[i]['location_name'],
+                    data[i]['value']
+                ]);
         }
         table.draw();
-        // $(table).DataTable();
-        // $('.dataTables_length').addClass('bs-select');
         return table;
     }
 
@@ -266,29 +260,30 @@ class ViewModel {
     }
 
     /**
-     * Populates the map with data regarding the specified variable
+     * Populates the map with data regarding the specified variable and update the legend with max values
      * 
      * @param {*} key 
      * @param {*} map 
      * @param {*} infoBox 
      * @param {*} variableName 
-     * @param {*} colors
+     * @param {*} variableName2
      */
-    async populateMap(key, map, infoBox, variableName) {
+    async populateMap(key, map, infoBox, variableName, variableName2) {
         let colors = this.colors;
-        console.log("Populating map");
         let old_geojson = this.model.getGeoJson(key);
         if (old_geojson !== null) {
             map.removeLayer(old_geojson);
         }
         try {
-            await this.model.fetchData(key, variableName).then((response) => {
-                let colorMapping = this.model.getColorMapping(this.colors, key);
+            await this.model.fetchData(key, variableName, variableName2).then((response) => {
+                let colorMapping = this.model.getColorMapping(colors, key);
                 let tractData = this.model.getTractData(key);
+
                 let parseFeature = this._parseFeature(tractData, colorMapping);
                 let style = this._style(parseFeature);
                 infoBox.update = this._update(tractData, this.model.getUnits(variableName));
                 let highlightFeature = this._highlightFeature(infoBox);
+
                 var geojson;
                 let resetHighlight = function (e) {
                     geojson.resetStyle(e.target);
@@ -302,7 +297,7 @@ class ViewModel {
             });
 
         } catch (error) {
-            console.log("Could not load " + variableName + " data from scrutinizer");
+            console.log("Could not load " + variableName + " + " + variableName2 + " data from scrutinizer");
             return -1;
         }
     }
@@ -396,6 +391,7 @@ class ViewModel {
         }
     }
 
+
     /*
      * 
      * Helper functions for populating the map
@@ -406,7 +402,7 @@ class ViewModel {
         return function (feature) {
             let string = "" + feature.properties['STATE'] + feature.properties['COUNTY'] + feature.properties['TRACT'];
             if (string in tractData) {
-                return colorMapping(tractData[string][0] / tractData[string][1]);
+                return colorMapping(tractData[string][0] / tractData[string][1], tractData[string][2] / tractData[string][3]);
             }
             return 0;
         }
@@ -430,7 +426,7 @@ class ViewModel {
             if (props) {
                 let key = props['STATE'] + props['COUNTY'] + props['TRACT'];
                 this._div.innerHTML = '<h6>Data Value</h6>' + (key in tractData ?
-                    '<b>' + tractData[key][0].toFixed(2) + ' ' + units
+                    '<b>Variable1: ' + tractData[key][0].toFixed(2) + ' ' + units + '<br/>Variable2: ' + tractData[key][2].toFixed(2) + ' ' + units
                     : 'Hover over a tract');
             }
         };

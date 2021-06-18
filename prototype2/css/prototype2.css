@@ -40,17 +40,17 @@
     width: auto;
 }
 
-    .map.largeScreen {
+.map.largeScreen {
         height: 85%;
-    }
+}
 
-    .map.midScreen {
+.map.midScreen {
         height: 80%;
-    }
+}
 
-    .map.smallScreen {
+.map.smallScreen {
         height: 60%;
-    }
+}
 
 ul, li {
     z-index: 1;
@@ -111,29 +111,35 @@ ul, li {
     display: flex;
 }
 
-#download1 {
-    /* display: inline-block; */
+.legendWrapper {
+    float: right;
 }
 
-#legend1, #legend2 {
-    /* display: inline-block; */
-    position: relative;
-    height: 60px;
+.grid {
     width: 200px;
-    margin-left: 50px;
-    /* margin-right: 100px;
-    margin-top: 10px; */
+    height: 100px;
+    display: grid;
+    grid-gap: 0px;
+    grid-template-columns: auto auto auto;
 }
 
-.legend {
+.legendLabel {
     display: flex;
-    width: 50%;
 }
 
-.legendDiv {
-    bottom: 0px;
-    position: absolute;
-    bottom: 0px;
+.var1label {
+    margin-top: 10px;
+    margin-left: 140px;
+    position: relative;
+}
+
+.var2label {
+    margin-top: 40px;
+    margin-right: 10px;
+}
+
+#labelvar2, #labelvar4 {
+    float: right;
 }
 
 h1 {
@@ -159,10 +165,10 @@ hr {
     border-radius: 5px;
 }
 
-    .info h4 {
-        margin: 0 0 5px;
-        color: #777;
-    }
+.info h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
 
 #buttonTab, #placeholder {
     display: inline-block;
@@ -171,22 +177,22 @@ hr {
     margin-right: 20px;
 }
 
-    #buttonTab.largeScreen, #placeholder.largeScreen {
-        width: 45px;
-        margin-top: 500px;
-    }
+#buttonTab.largeScreen, #placeholder.largeScreen {
+    width: 45px;
+    margin-top: 500px;
+}
 
-    #buttonTab.midScreen, #placeholder.midScreen {
-        width: 45px;
-        margin-top: 340px;
-    }
+#buttonTab.midScreen, #placeholder.midScreen {
+    width: 45px;
+    margin-top: 340px;
+}
 
-    #buttonTab.smallScreen, #placeholder.smallScreen {
-        width: 45px;
-        margin-top: 25px;
-        margin-bottom: 25px;
-        margin-left: 25px;
-    }
+#buttonTab.smallScreen, #placeholder.smallScreen {
+    width: 45px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    margin-left: 25px;
+}
 
 .disabled {
     display: none !important;
