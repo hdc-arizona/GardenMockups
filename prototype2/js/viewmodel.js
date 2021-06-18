@@ -150,6 +150,30 @@ class ViewModel {
         }
     }
 
+
+    /**
+     * Update the legend to show scale
+     * 
+     * @param {*} key The model key for the specified visualization's data
+     * @param {*} div1 The placeholder for y-axis (variable 2 max valuelabel)
+     * @param {*} div2 The placeholder for x-axis (variable 1 max valuelabel)
+     */
+    updateLegend(key, div1, div2) {
+        div2.innerHTML = "0";
+        div1.innerHTML = "0";
+        let minMax = this.model.getMinMax(key);
+        let max1 = minMax[1].toFixed(5);
+        let max2 = minMax[3].toFixed(5);
+        if (max2 <= 0) {
+            div2.innerHTML = max1;
+            div1.innerHTML = "N/A";
+        }
+        else {
+            div2.innerHTML = max1;
+            div1.innerHTML = max2;
+        }
+    }
+
     createTable(tableId, divId) {
         let container = document.getElementById(divId);
         let table = document.createElement("table");
@@ -235,7 +259,7 @@ class ViewModel {
     }
 
     /**
-     * Populates the map with data regarding the specified variable
+     * Populates the map with data regarding the specified variable and update the legend with max values
      * 
      * @param {*} key 
      * @param {*} map 

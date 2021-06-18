@@ -43,7 +43,7 @@ class Model {
     }
 
     getColorMapping(colors, key) {
-        let minmax = this._getMinMax(key);
+        let minmax = this.getMinMax(key);
         let min1 = minmax[0];
         let max1 = minmax[1];
         let diff1 = max1 - min1;
@@ -277,7 +277,7 @@ class Model {
      * Gets the minimum and maximum data values for each variable from the tractMap under the specified key.
      * @param {*} key 
      */
-    _getMinMax(key) {
+    getMinMax(key) {
         if (!(key in this.tractDataMaps)) {
             return [-1, -1, -1, -1];
         }

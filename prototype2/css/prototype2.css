@@ -80,11 +80,16 @@ ul, li{
 .var1label {
     margin-top: 10px;
     margin-left: 140px;
+    position: relative;
 }
 
 .var2label {
     margin-top: 40px;
     margin-right: 10px;
+}
+
+#labelvar2, #labelvar4{
+    float:right;
 }
 
 h1 {
