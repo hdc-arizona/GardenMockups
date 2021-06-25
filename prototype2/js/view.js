@@ -19,30 +19,43 @@ document.addEventListener("DOMContentLoaded", function() {
         table2 = viewModel.createTable("table2", "tables");
 
         // View UI Listeners
-        document.getElementById("searchBar1").addEventListener('awesomplete-selectcomplete', (event) => {
-            viewModel.populateMap("map1", map1, infoBox1, event.text.value).then((status) => 
-                viewModel.populateLegend("map1", document.getElementById("legend1"))).then((status) =>
-                viewModel.populateTable("map1", table1));
+        viewModel.populateLegend("map1", document.getElementById("legend1"));
+        viewModel.populateLegend("map2", document.getElementById("legend2"));
+
+
+        document.getElementById("search1").addEventListener('click', (event) => {
+            var var1 = document.getElementById("searchBar1").value;
+            var var2 = document.getElementById("searchBar1.1").value;
+            if (var1 != "") {
+                viewModel.populateMap("map1", map1, infoBox1, var1, var2).then((status) =>
+                    viewModel.populateTable("map1", table1) | viewModel.updateLegend("map1", document.getElementById("labelvar1"), document.getElementById("labelvar2"))
+                );
+            }   
         });
-        document.getElementById("searchBar2").addEventListener('awesomplete-selectcomplete', (event)=>{
-            viewModel.populateMap("map2", map2, infoBox2, event.text.value).then((status) => 
-                viewModel.populateLegend("map2", document.getElementById("legend2"))).then((status) =>
-                viewModel.populateTable("map2", table2));
+
+        document.getElementById("search2").addEventListener('click', (event) => {
+            var var3 = document.getElementById("searchBar2").value;
+            var var4 = document.getElementById("searchBar2.1").value;
+            if (var3 != "") {
+                viewModel.populateMap("map2", map2, infoBox2, var3, var4).then((status) =>
+                    viewModel.populateTable("map2", table2) | viewModel.updateLegend("map2", document.getElementById("labelvar3"), document.getElementById("labelvar4"))
+                );
+            }
         });
-        
+   
         document.getElementById("download1").addEventListener('click', () => {
             viewModel.downloadBlockData("map1");
         });
         document.getElementById("download2").addEventListener('click', () => {
             viewModel.downloadBlockData("map2");
 		});
-		document.getElementById("downloadTable1").addEventListener('click', () => {
+
+        document.getElementById("downloadTable1").addEventListener('click', () => {
             viewModel.downloadTableData("map1");
         });
         document.getElementById("downloadTable2").addEventListener('click', () => {
             viewModel.downloadTableData("map2");
         });
-
 
 		document.getElementById("toggleMapButton").addEventListener('click', (event) => {
 			viewModel.toggleMap2();
@@ -85,11 +98,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	
 		viewModel.resize();
+
 		map1.invalidateSize();
 		map2.invalidateSize();
-		
-		
-        
-        
-        
+
 });

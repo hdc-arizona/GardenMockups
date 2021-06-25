@@ -43,74 +43,64 @@
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
 	<!-- Google Fonts -->
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
-
 </head>
 <body>
-	<div id="maps">
-		<div class="viz sizeable" id="viz1">
-			<span>Variable Search: </span><input id="searchBar1">
-			<!-- <select name="variable1" id="variable1">
-				<option value="none">(none)</option>
-				<option value="aluminum">aluminum</option>
-				<option value="arsenic">arsenic</option>
-				<option value="barium">barium</option>
-				<option value="beryllium">beryllium</option>
-				<option value="cadmium">cadmium</option>
-				<option value="chromium">chromium</option>
-				<option value="copper">copper</option>
-				<option value="lead">lead</option>
-				<option value="manganese">manganese</option>
-				<option value="nickel">nickel</option>
-				<option value="zinc">zinc</option>
-			</select> -->
-			<div class="map sizeable">
-				<div id="map1"></div>
-			</div>
-
-			<div class="bottom-dash">
-				<button id="download1" class="btn btn-primary">Download Data</button>
-				<div id="legend1"></div>
-				<!-- <button id="table1" class="btn btn-primary">Table</button> -->
-			</div>
-
+	<div class="viz sizeable" id="viz1">
+		<span>Variable Search 1: </span><input type="text" id="searchBar1"><br />
+		<span>Variable Search 2: </span><input id="searchBar1.1" type="text"><br />
+		<button id="search1" class="btn btn-primary">Search</button>
+		<div class="map sizeable">
+			<div id="map1"></div>
 		</div>
-		<div id="buttonTab" class="sizeable">
-			<input id="toggleMapButton" type="button" value="Hide">
-			<input id="linkMapButton" type="button" value="Link">
-		</div>
-		<div class="viz sizeable" id="viz2">
-			<span>Variable Search: </span><input id="searchBar2">
-			<!-- <select name="variable2" id="variable2">
-				<option value="none">(none)</option>
-				<option value="aluminum">aluminum</option>
-				<option value="arsenic">arsenic</option>
-				<option value="barium">barium</option>
-				<option value="beryllium">beryllium</option>
-				<option value="cadmium">cadmium</option>
-				<option value="chromium">chromium</option>
-				<option value="copper">copper</option>
-				<option value="lead">lead</option>
-				<option value="manganese">manganese</option>
-				<option value="nickel">nickel</option>
-				<option value="zinc">zinc</option>
-			</select> -->
-			<div class="map sizeable">
-				<div id="map2"></div>
-			</div>
-			<div class="bottom-dash">
-				<button id="download2" class="btn btn-danger">Download Data</button>
-				<div id="legend2"></div>
-				<!-- <button id="table2" class="btn btn-primary">Table</button> -->
-			</div>
 
+		<div class="bottom-dash">
+			<button id="download1" class="btn btn-primary">Download Data</button>
+		</div>
+		<br />
+		<div class="legendWrapper">
+			<div class="legendLabel">
+				<div class="var2label"><p>Variable 2</p></div>
+				<div id="labelvar1"><p>0</p></div>
+				<div class="grid " id="legend1"></div>
+			</div>
+			<div id="labelvar2"><p>0</p></div>
+			<div class="var1label"><p>Variable 1</p></div>
+		</div>
+	</div>
+
+	<div id="buttonTab" class="sizeable">
+		<input id="toggleMapButton" type="button" value="Hide">
+		<input id="linkMapButton" type="button" value="Link">
+	</div>
+
+	<div class="viz sizeable" id="viz2">
+		<span>Variable Search 1: </span><input id="searchBar2"><br />
+		<span>Variable Search 2: </span><input id="searchBar2.1"><br />
+		<button id="search2" class="btn btn-danger">Search</button>
+		<div class="map sizeable">
+			<div id="map2"></div>
+		</div>
+		<div class="bottom-dash">
+			<button id="download2" class="btn btn-danger">Download Data</button>
+		</div>
+		<br />
+
+		<div class="legendWrapper">
+			<div class="legendLabel">
+				<div class="var2label"><p>Variable 2</p></div>
+				<div id="labelvar3"><p>0</p></div>
+				<div class="grid " id="legend2"></div>
+			</div>
+			<div id="labelvar4"><p>0</p></div>
+			<div class="var1label"><p>Variable 1</p></div>
 		</div>
 	</div>
 
 	<div id="tables">
 	</div>
+
 	<div class="legend viz">
-
-
 	</div>
+
 </body>
 </html>
