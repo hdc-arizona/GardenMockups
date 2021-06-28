@@ -64,6 +64,33 @@ class ViewModel {
         });
     }
 
+    /**
+    *
+    * Change the search button into a loading icon when clicked (only change when there is value in the search bar)
+    * 
+    * @param {*} btn the search btn
+    */
+        changeToLoad(btn) {
+            btn.innerHTML = "";
+            btn.className = "spinner-border text-info";
+        }
+
+    /**
+    *
+    * Change the search button's background back to original
+    * 
+    * @param {*} btn the search btn
+    */
+    changeBack(btn) {
+        var id = btn.id[btn.id.length - 1];
+        btn.innerHTML = "Search";
+        if (id == 1) {
+            btn.className = "btn btn-primary";
+        }
+        if (id == 2) {
+            btn.className = "btn btn-danger";
+        }
+    }
 
     /**
      * Downloads data from the specified map into a csv file
@@ -155,22 +182,22 @@ class ViewModel {
      * Update the legend to show scale
      * 
      * @param {*} key The model key for the specified visualization's data
-     * @param {*} div1 The placeholder for y-axis (variable 2 max valuelabel)
-     * @param {*} div2 The placeholder for x-axis (variable 1 max valuelabel)
+     * @param {*} div1 The placeholder for x-axis (variable 1 max valuelabel)
+     * @param {*} div2 The placeholder for y-axis (variable 2 max valuelabel)
      */
     updateLegend(key, div1, div2) {
-        div2.innerHTML = "0";
         div1.innerHTML = "0";
+        div2.innerHTML = "0";
         let minMax = this.model.getMinMax(key);
         let max1 = minMax[1].toFixed(5);
         let max2 = minMax[3].toFixed(5);
         if (max2 <= 0) {
-            div2.innerHTML = max1;
-            div1.innerHTML = "N/A";
+            div1.innerHTML = max1;
+            div2.innerHTML = "N/A";
         }
         else {
-            div2.innerHTML = max1;
-            div1.innerHTML = max2;
+            div1.innerHTML = max1;
+            div2.innerHTML = max2;
         }
     }
 

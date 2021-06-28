@@ -10,11 +10,11 @@
 }
 
 .viz.largeScreen, .dataTables_wrapper.largeScreen {
-    width: 750px;
+    width: 1600px;
 }
 
 .viz.midScreen, .dataTables_wrapper.midScreen {
-    width: 550px;
+    width: 800px;
 }
 
 .viz.smallScreen, .dataTables_wrapper.smallScreen {
@@ -22,15 +22,15 @@
 }
 
 .viz.largeScreen {
-    height: 900px;
+    height: 3000px;
 }
 
 .viz.midScreen {
-    height: 650px;
+    height: 2000px;
 }
 
 .viz.smallScreen {
-    height: 350px;
+    height: 1000px;
 }
 
 .map {
@@ -138,7 +138,7 @@ ul, li {
     margin-right: 10px;
 }
 
-#labelvar2, #labelvar4 {
+#var1map1, #var1map2 {
     float: right;
 }
 
