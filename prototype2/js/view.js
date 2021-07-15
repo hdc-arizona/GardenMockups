@@ -6,7 +6,6 @@ var infoBox1 = null;
 var infoBox2 = null;
 var viewModel = null;
 
-
 document.addEventListener("DOMContentLoaded", function () {
 	viewModel = new ViewModel();
 	map1 = viewModel.createMap("map1");
@@ -120,9 +119,9 @@ document.addEventListener("DOMContentLoaded", function () {
 	viewModel.fetchVariable("map1", " (cadmium)");
 
 	//automatic searches for recording time
-	//setTimeout(function () { startSearch(" (barium)", "", 5000); }, 1000);	
-	//setTimeout(function () { startSearch(" (arsenic)", " (nickel)", 5000); }, 10000);
-	//setTimeout(function () { startSearch(" (copper)", " (zinc)", 5000); }, 20000);
+	setTimeout(function () { startSearch(" (arsenic)", " (barium)", 10000); }, 5000);
+	setTimeout(function () { startSearch(" (copper)", " (zinc)", 10000); }, 25000);
+	
 });
 
 
@@ -137,7 +136,22 @@ function startSearch(variableName, variableName2, timeOut) {
 	document.getElementById("searchBar1").value = variableName;
 	document.getElementById("searchBar1.1").value = variableName2;
 	document.getElementById("search1").click();
-	setTimeout(function () { console.log(viewModel.getOutput()); }, timeOut);
-	
+
+	setTimeout(function () {
+		download(variableName+variableName2+".txt", viewModel.getOutput());
+	}, timeOut);
+}
+
+function download(filename, text) {
+	var element = document.createElement('a');
+	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+	element.setAttribute('download', filename);
+
+	element.style.display = 'none';
+	document.body.appendChild(element);
+
+	element.click();
+
+	document.body.removeChild(element);
 }
 

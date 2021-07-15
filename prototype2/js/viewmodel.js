@@ -475,7 +475,6 @@ class ViewModel {
         return function (feature) {
             let string = "" + feature.properties['STATE'] + feature.properties['COUNTY'] + feature.properties['TRACT'];
             if (string in tractData) {
-                console.log(colorMapping(tractData[string][0] / tractData[string][1], tractData[string][2] / tractData[string][3]));
                 return colorMapping(tractData[string][0] / tractData[string][1], tractData[string][2] / tractData[string][3]);
             }
             return 0;
