@@ -119,8 +119,8 @@ document.addEventListener("DOMContentLoaded", function () {
 	viewModel.fetchVariable("map1", " (cadmium)");
 
 	//automatic searches for recording time
-	setTimeout(function () { startSearch(" (arsenic)", " (barium)", 10000); }, 5000);
-	setTimeout(function () { startSearch(" (copper)", " (zinc)", 10000); }, 25000);
+	//setTimeout(function () { startSearch(" (arsenic)", " (barium)", 10000); }, 5000);
+	//setTimeout(function () { startSearch(" (copper)", " (zinc)", 10000); }, 25000);
 	
 });
 
