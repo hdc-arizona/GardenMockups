@@ -26,10 +26,8 @@ class Model {
     getUnits(variables) {
         var units = [];
         for (var i = 0; i < variables.length;i++) {
-            console.log(this.variableMap[variables[i]]['unit']);
             units.push(this.variableMap[variables[i]]['unit']);
         }
-        console.log(units);
         return units;
     }
 

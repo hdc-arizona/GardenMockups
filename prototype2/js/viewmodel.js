@@ -304,6 +304,12 @@ class ViewModel {
         if (old_geojson !== null) {
             map.removeLayer(old_geojson);
         }
+        let varNames = [];
+        for (var i = 0; i < this.vars.length; i++) {
+            varNames.push(this.model.variableMap[this.vars[i]]['name']);
+        }
+        console.log(varNames);
+
         var now = new Date();
         console.log("\n\nCURRENT TIME: " + now + "\n\nStart fetching from database after" + this.vars + " is selected....");
         var start1 = new Date();
@@ -322,9 +328,7 @@ class ViewModel {
                 let tractData = this.model.getTractData(key);
                 let parseFeature = this._parseFeature(tractData, colorMapping);
                 let style = this._style(parseFeature);
-                console.log(tractData);
-                console.log(colorMapping);
-                infoBox.update = this._update(tractData, this.model.getUnits(this.vars));
+                infoBox.update = this._update(tractData, this.model.getUnits(this.vars), varNames);
                 let highlightFeature = this._highlightFeature(infoBox);
                 var geojson;
                 let resetHighlight = function (e) {
@@ -495,17 +499,16 @@ class ViewModel {
         }
     }
 
-    _update(tractData, units) {
+    _update(tractData, units, varNames) {
         return function (props) {
             if (props) {
                 let key = props['STATE'] + props['COUNTY'] + props['TRACT'];
                 var hoverData = "";
                 for (var i = 0; i < units.length; i++) {
-                    hoverData += '<b>' + tractData[key][i*2].toFixed(2) + ' ' + units[i]
+                    hoverData += varNames[i] + ": " + tractData[key][i*2].toFixed(2) + ' ' + units[i] + "<br/>"
                 }
-                console.log(hoverData);
                 this._div.innerHTML = '<h6>Data Value</h6>' + (key in tractData ?
-                    hoverData: 'Hover over a tract');
+                    hoverData : 'Hover over a tract');
             }
         };
     }
@@ -601,13 +604,17 @@ class ViewModel {
             var numBars = this.barsCountMap1;
             for (var i = 0; i < numBars; i++) {
                 var bar = document.getElementById("searchBar1." + i);
-                this.vars.push(bar.value);
+                if (bar.value != "") {
+                    this.vars.push(bar.value);
+                }
             }
         } else {
             var numBars = this.barsCountMap2;
             for (var i = 0; i < numBars; i++) {
                 var bar = document.getElementById("searchBar2." + i);
-                this.vars.push(bar.value);
+                if (bar.value != "") {
+                    this.vars.push(bar.value);
+                }
             }
         }
         //console.log(this.vars);
