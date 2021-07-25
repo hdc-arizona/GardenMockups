@@ -4,9 +4,10 @@ class ViewModel {
         this.colors = this.model.interpolate('yellow', 'firebrick');
         // the two colors passed into this function will be the two end colors of the legend
         // and map illustration (shows the greatest and lowest level)
-        this.output = "";
-        // this string will show how much time is needed for fetching data and rendering
-        // when populating map in each variable call
+        this.barsCountMap1 = 1;
+        this.barsCountMap2 = 1;
+        this.vars = [];
+        // keeps track of number of search bars (variables in the two maps)
         try {
             this.model.fetchVariables();
         } catch (error) {
@@ -171,7 +172,7 @@ class ViewModel {
             counts[colors[i]] = 0;
         }
         let tractData = this.model.getTractData(key);
-        let colorMapping = this.model.getColorMapping(colors, key);
+        let colorMapping = this.model.getColorMapping(colors, key, this.vars);
         var maxCount = 0;
 
         for (let tractId in tractData) {
@@ -297,26 +298,25 @@ class ViewModel {
      * @param {*} key 
      * @param {*} map 
      * @param {*} infoBox 
-     * @param {*} variableName 
      */
-    async populateMap(key, map, infoBox, variableName) {
+    async populateMap(key, map, infoBox) {
         let old_geojson = this.model.getGeoJson(key);
         if (old_geojson !== null) {
             map.removeLayer(old_geojson);
         }
         var now = new Date();
-        var outStr = "\n\nCURRENT TIME: " + now + "\n\nStart fetching from database after" + variableName + " is selected....";
+        var outStr = "\n\nCURRENT TIME: " + now + "\n\nStart fetching from database after" + this.vars + " is selected....";
         var start1 = new Date();
 
         try {
-            await this.model.fetchData(key, variableName).then((response) => {
+            await this.model.fetchData(key, this.vars).then((response) => {
 
                 var end1 = new Date();
                 var duration1 = end1.getTime() - start1.getTime();
-                outStr += "\n\nTime recorded: " + duration1 + " milliseconds\n";
+                outStr += "\nTime recorded: " + duration1 + " milliseconds\n";
 
                 var start2 = new Date();
-                outStr += "\n\nStart rendering the map after" + variableName + " is selected.....";
+                outStr += "\n\nStart rendering the map after" + this.vars + " is selected.....";
 
                 let colorMapping = this.model.getColorMapping(this.colors, key);
                 let tractData = this.model.getTractData(key);
@@ -338,18 +338,17 @@ class ViewModel {
                 var duration2 = end2.getTime() - start2.getTime();
                 var total = duration1 + duration2;
                 outStr += "\n\nTime recorded: " + duration2 + " milliseconds\n";
-                outStr += "\n\nTotal time elapsed after" + variableName + " is selected: " + total + " milliseconds\n";
-                this.output = "";
-                this.output = outStr;
+                outStr += "\nTotal time elapsed after" + variableName + " is selected: " + total + " milliseconds\n";
+                console.log(outStr);
                 return 1;
             });
 
         } catch (error) {
             var end = new Date();
             var duration = end.getTime() - start1.getTime();
-            outStr += "\n\nCould not load " + variableName + " data from scrutinizer";
-            outStr += "\n\nTotal time elapsed after" + variableName + " is selected: " + duration + " milliseconds\n";
-            this.output = outStr;
+            outStr += "\nCould not load data from scrutinizer";
+            outStr += "\nTotal time elapsed after" + this.vars + " is selected: " + duration + " milliseconds\n";
+            console.log(outStr);
             return -1;
         }
     }
@@ -468,16 +467,19 @@ class ViewModel {
     }
 
     /*
-     * 
+     *
      * Helper functions for populating the map
      *  
      */
 
     _parseFeature(tractData, colorMapping) {
+        console.log(tractData);
+        console.log(colorMapping);
         return function (feature) {
             let string = "" + feature.properties['STATE'] + feature.properties['COUNTY'] + feature.properties['TRACT'];
+            console.log(string);
             if (string in tractData) {
-                return colorMapping(tractData[string][0] / tractData[string][1]);
+                return colorMapping(tractData[string][6]);
             }
             return 0;
         }
@@ -500,9 +502,13 @@ class ViewModel {
         return function (props) {
             if (props) {
                 let key = props['STATE'] + props['COUNTY'] + props['TRACT'];
+                var hoverData = "";
+                for (var i = 0; i < this.vars.length; i++) {
+                    hoverData += '<b>' + tractData[key][i*2].toFixed(2) + ' ' + units
+                }
+                console.log(hoverData);
                 this._div.innerHTML = '<h6>Data Value</h6>' + (key in tractData ?
-                    '<b>' + tractData[key][0].toFixed(2) + ' ' + units
-                    : 'Hover over a tract');
+                    hoverData: 'Hover over a tract');
             }
         };
     }
@@ -539,5 +545,91 @@ class ViewModel {
             });
         }
     }
+
+    /*
+    * Add a search bar (for one more variable)
+    * @param {*} barDiv
+    */
+    addSearchBar(barDiv) {
+        var bars = document.getElementById(barDiv);
+        var brk = document.createElement("br");
+        bars.appendChild(brk);
+        var newBar = document.createElement("input");
+        if (bars.id == "bars1") {
+            newBar.id = "searchBar1." + this.barsCountMap1;
+            this.barsCountMap1++;
+            var mapID = 1;
+        } else {
+            newBar.id = "searchBar2." + this.barsCountMap2;
+            this.barsCountMap2++;
+            var mapID = 2;
+        }
+        bars.appendChild(newBar);
+        this.createSearchBar(newBar);
+        newBar.addEventListener('keyup', function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("search" + mapID).click();
+            }
+        });
+    }
+
+    /*
+    * Delete a search bar (until reach 1 bar)
+    * @param {*} barDiv
+    */
+    delSearchBar(barDiv) {
+        var bars = document.getElementById(barDiv);
+        if (bars.id == "bars1") {
+            this.barsCountMap1--;
+            if (this.barsCountMap1 > 1) {
+                bars.removeChild(bars.lastElementChild);
+            }
+        } else {
+            this.barsCountMap2--;
+            if (this.barsCountMap2 > 1) {
+                bars.removeChild(bars.lastElementChild);
+            }
+        }
+        bars.removeChild(bars.lastElementChild); // remove <br/>
+    }
+
+    /*
+    * Save all current variables on search bars
+    * @param {*} barDiv
+    */
+    saveSearchValues(barDiv) {
+        var bars = document.getElementById(barDiv);
+        if (bars.id == 'bars1') {
+            var numBars = this.barsCountMap1;
+            for (var i = 0; i < numBars; i++) {
+                var bar = document.getElementById("searchBar1." + i);
+                this.vars.push(bar.value);
+            }
+        } else {
+            var numBars = this.barsCountMap2;
+            for (var i = 0; i < numBars; i++) {
+                var bar = document.getElementById("searchBar2." + i);
+                this.vars.push(bar.value);
+            }
+        }
+        //console.log(this.vars);
+    }
+
+    /*
+    * Get all variables being saved for searching
+    */
+    getVars() {
+        return this.vars;
+    }
+
+
+    /*
+    * Clear all variables being saved for searching
+    */
+    clearVars() {
+        this.vars = [];
+    }
 }
+
 
