@@ -1,7 +1,7 @@
 class ViewModel {
     constructor() {
         this.model = new Model();
-        this.colors = this.model.interpolate('yellow', 'firebrick');
+        this.colors = this.model.interpolate('turquoise', 'purple');
         // the two colors passed into this function will be the two end colors of the legend
         // and map illustration (shows the greatest and lowest level)
         this.barsCountMap1 = 1;
