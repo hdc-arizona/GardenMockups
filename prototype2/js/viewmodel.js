@@ -493,10 +493,11 @@ class ViewModel {
             if (props) {
                 let key = props['STATE'] + props['COUNTY'] + props['TRACT'];
                 var hoverData = "";
-                for (var i = 0; i < units.length; i++) {
-                    if (key in tractData) {
+                if (key in tractData) {
+                    for (var i = 0; i < units.length; i++) {
                         hoverData += "<b>" + varNames[i] + ": </b>" + tractData[key][i * 2].toFixed(2) + ' ' + units[i] + "<br/>"
                     }
+                    hoverData += "<b>normalized value: </b>" + (tractData[key][tractData[key].length - 1].toFixed(2));                    
                 }
                 this._div.innerHTML = '<h6>Data Value</h6>' + (key in tractData ?
                     hoverData : 'Hover over a tract');

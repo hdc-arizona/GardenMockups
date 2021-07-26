@@ -51,7 +51,7 @@ class Model {
     }
 
     getColorMapping(colors, key) {
-         return function (d) {
+        return function (d) {
             return (d < 1) ?colors[Math.floor(d * 8.0)] : colors[colors.length - 1];
         }
     }
