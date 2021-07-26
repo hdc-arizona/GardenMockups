@@ -106,6 +106,7 @@ class ViewModel {
             alert(key + " has no data to download.");
             return;
         }
+        console.log(data);
         let csv = "Row,GeoId,StateFP,StateName,CountyFP,CountyName,TractCE,BlockgroupCE,Medium,Value\n";
         for (let i = 0; i < data.length; i++) {
             let geoId = data[i]['location_name'];
@@ -248,28 +249,21 @@ class ViewModel {
         table.rows().remove();
         let data = this.model.getOriginalData(key);
 
-        // let body = table.getElementsByTagName('tbody')[0];
-        // body.innerHTML = "";
-        for (let i = 0; i < data.length; i++) {
-            table.row.add(
-                [
-                    data[i]['variable_name'],
-                    data[i]['variable_desc'],
-                    data[i]['location_type'],
-                    data[i]['location_name'],
-                    data[i]['value']
-                ]); // .draw();
-            // let row = document.createElement('tr');
-            // this._addColumnValue(row, data[i]['variable_name']);
-            // this._addColumnValue(row, data[i]['variable_desc']);
-            // this._addColumnValue(row, data[i]['location_type']);
-            // this._addColumnValue(row, data[i]['location_name']);
-            // this._addColumnValue(row, data[i]['value']);
-            // body.appendChild(row);
+        for (var i = 0; i < this.vars.length; i++) {
+            let varData = data[i];
+            for (let i = 0; i < varData.length; i++) {
+                table.row.add(
+                    [
+                        varData[i]['variable_name'],
+                        varData[i]['variable_desc'],
+                        varData[i]['location_type'],
+                        varData[i]['location_name'],
+                        varData[i]['value']
+                    ]);
+            }
         }
+        
         table.draw();
-        // $(table).DataTable();
-        // $('.dataTables_length').addClass('bs-select');
         return table;
     }
 
@@ -308,7 +302,6 @@ class ViewModel {
         for (var i = 0; i < this.vars.length; i++) {
             varNames.push(this.model.variableMap[this.vars[i]]['name']);
         }
-        console.log(varNames);
 
         var now = new Date();
         console.log("\n\nCURRENT TIME: " + now + "\n\nStart fetching from database after" + this.vars + " is selected....");
@@ -505,7 +498,9 @@ class ViewModel {
                 let key = props['STATE'] + props['COUNTY'] + props['TRACT'];
                 var hoverData = "";
                 for (var i = 0; i < units.length; i++) {
-                    hoverData += varNames[i] + ": " + tractData[key][i*2].toFixed(2) + ' ' + units[i] + "<br/>"
+                    if (key in tractData) {
+                        hoverData += "<b>" + varNames[i] + ": </b>" + tractData[key][i * 2].toFixed(2) + ' ' + units[i] + "<br/>"
+                    }
                 }
                 this._div.innerHTML = '<h6>Data Value</h6>' + (key in tractData ?
                     hoverData : 'Hover over a tract');
@@ -599,6 +594,7 @@ class ViewModel {
     * @param {*} barDiv
     */
     saveSearchValues(barDiv) {
+        this.vars = [];
         var bars = document.getElementById(barDiv);
         if (bars.id == 'bars1') {
             var numBars = this.barsCountMap1;
@@ -617,7 +613,6 @@ class ViewModel {
                 }
             }
         }
-        //console.log(this.vars);
     }
 
     /*
@@ -625,14 +620,6 @@ class ViewModel {
     */
     getVars() {
         return this.vars;
-    }
-
-
-    /*
-    * Clear all variables being saved for searching
-    */
-    clearVars() {
-        this.vars = [];
     }
 }
 

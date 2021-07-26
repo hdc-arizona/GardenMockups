@@ -36,9 +36,9 @@ document.addEventListener("DOMContentLoaded", function() {
 			if (viewModel.getVars[0] != "") {
 				viewModel.changeToLoad(document.getElementById("search1"));
 				viewModel.populateMap("map1", map1, infoBox1).then((status) =>
-					viewModel.changeBack(document.getElementById("search1")) //|
+					viewModel.changeBack(document.getElementById("search1")) |
 					//viewModel.populateLegend("map1", document.getElementById("legend1"))).then((status) =>
-					//viewModel.populateTable("map1", table1) | viewModel.clearVars()
+					viewModel.populateTable("map1", table1)
 				);
             } 
 		});
@@ -64,7 +64,8 @@ document.addEventListener("DOMContentLoaded", function() {
 			   viewModel.populateMap("map2", map2, infoBox2).then((status) =>
 				   viewModel.changeBack(document.getElementById("search2")) |
 				   viewModel.populateLegend("map2", document.getElementById("legend2"))).then((status) =>
-					   viewModel.populateTable("map2", table2) | viewModel.clearVars());
+					   viewModel.populateTable("map2", table2)
+				   );
 		   }
         });
 
