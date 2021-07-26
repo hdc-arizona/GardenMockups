@@ -4,7 +4,6 @@ class ViewModel {
         this.colors = this.model.interpolate('rgb(220,208,255)', 'red', 'blue');
         // the two colors passed into this function will be the two end colors of the legend
         // and map illustration (shows the greatest and lowest level)
-        this.output = "";
         try {
             this.model.fetchVariables();
         } catch (error) {
@@ -302,16 +301,16 @@ class ViewModel {
         }
 
         var now = new Date();
-        var outStr = "\n\nCURRENT TIME: " + now + "\n\nStart fetching from database after variable(s) are selected....";
+        console.log("\n\nCURRENT TIME: " + now + "\n\nStart fetching from database after variable(s) are selected....");
         var start1 = new Date();
 
         try {
             await this.model.fetchData(key, variableName, variableName2).then((response) => {
                 var end1 = new Date();
                 var duration1 = end1.getTime() - start1.getTime();
-                outStr += "\n\nTime recorded: " + duration1 + " milliseconds\n";
+                console.log("\nTime recorded: " + duration1 + " milliseconds\n");
                 var start2 = new Date();
-                outStr += "\n\nStart rendering the map after variable(s) are selected.....";
+                console.log("\n\nStart rendering the map after variable(s) are selected.....");
 
                 let colorMapping = this.model.getColorMapping(colors, key);
                 let tractData = this.model.getTractData(key);
@@ -334,28 +333,18 @@ class ViewModel {
                 var end2 = new Date();
                 var duration2 = end2.getTime() - start2.getTime();
                 var total = duration1 + duration2;
-                outStr += "\n\nTime recorded: " + duration2 + " milliseconds\n";
-                outStr += "\n\nTotal time elapsed after variable(s) are selected: " + total + " milliseconds\n";
-                this.output = "";
-                this.output = outStr;
+                console.log("\nTime recorded: " + duration2 + " milliseconds\n");
+                console.log("\nTotal time elapsed after variable(s) are selected: " + total + " milliseconds\n");
                 return 1;
             });
 
         } catch (error) {
             var end = new Date();
             var duration = end.getTime() - start1.getTime();
-            outStr += "\n\nCould not load " + variableName + " + " + variableName2 + " data from scrutinizer";
-            outStr += "\n\nTotal time elapsed after variable(s) are selected: " + duration + " milliseconds\n";
-            this.output = outStr;
+            console.log("\nCould not load " + variableName + " + " + variableName2 + " data from scrutinizer");
+            console.log("\nTotal time elapsed after variable(s) are selected: " + duration + " milliseconds\n");
             return -1;
         }
-    }
-
-    /*
-    * Get the output from populating the map that records time 
-    */
-    getOutput() {
-        return this.output;
     }
 
     /*
