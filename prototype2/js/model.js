@@ -229,7 +229,7 @@ class Model {
                 if (tractMap[tractId][i * 2 + 1] > 0) {
                     currAvg = tractMap[tractId][i * 2] / tractMap[tractId][i * 2 + 1];
                 }
-                let normalizedVal = (currAvg - minMax[i * 2 + 1]) / (minMax[i * 2] - minMax[i * 2 + 1]);
+                let normalizedVal = (currAvg - minMax[i * 2]) / (minMax[i * 2 + 1] - minMax[i * 2]);
                 if (!(tractId in normalizedValues)) {
                     normalizedValues[tractId] = [];
                 }
