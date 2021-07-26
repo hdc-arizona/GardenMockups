@@ -173,16 +173,14 @@ class ViewModel {
             counts[colors[i]] = 0;
         }
         let tractData = this.model.getTractData(key);
-        let colorMapping = this.model.getColorMapping(colors, key, this.vars);
+        let colorMapping = this.model.getColorMapping(colors, key);
         var maxCount = 0;
-
         for (let tractId in tractData) {
-            let color = colorMapping(tractData[tractId][0] / tractData[tractId][1]);
+            let color = colorMapping(tractData[tractId][tractData[tractId].length-1]);
             counts[color] += 1;
             if (maxCount < counts[color])
                 maxCount = counts[color];
         }
-
         var convertHeight = (count) => (count / maxCount) * legendHeight;
         let width = (legendWidth - 20) / 8;
         for (var i = 0; i < colors.length; i++) {
@@ -194,8 +192,6 @@ class ViewModel {
             div.className = "legendDiv";
             legend.appendChild(div);
         }
-        // let hr = document.createElement("hr");
-        // legend.appendChild(hr);
     }
 
     createTable(tableId, divId) {
@@ -473,7 +469,7 @@ class ViewModel {
         return function (feature) {
             let string = "" + feature.properties['STATE'] + feature.properties['COUNTY'] + feature.properties['TRACT'];
             if (string in tractData) {
-                return colorMapping(tractData[string][6]);
+                return colorMapping(tractData[string][tractData[string].length - 1]);
             }
             return 0;
         }

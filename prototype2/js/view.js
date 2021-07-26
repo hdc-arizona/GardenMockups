@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				viewModel.changeToLoad(document.getElementById("search1"));
 				viewModel.populateMap("map1", map1, infoBox1).then((status) =>
 					viewModel.changeBack(document.getElementById("search1")) |
-					//viewModel.populateLegend("map1", document.getElementById("legend1"))).then((status) =>
+					viewModel.populateLegend("map1", document.getElementById("legend1"))).then((status) =>
 					viewModel.populateTable("map1", table1)
 				);
             } 
