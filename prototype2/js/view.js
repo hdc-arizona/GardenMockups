@@ -6,7 +6,6 @@ var infoBox1 = null;
 var infoBox2 = null;
 var viewModel = null;
 
-
 document.addEventListener("DOMContentLoaded", function () {
 	viewModel = new ViewModel();
 	map1 = viewModel.createMap("map1");
@@ -116,8 +115,8 @@ document.addEventListener("DOMContentLoaded", function () {
 	map1.invalidateSize();
 	map2.invalidateSize();
 
-
-
-
-
+	// initial background DB query (1 variable only)
+	viewModel.fetchVariable("map1", " (cadmium)");	
 });
+
+

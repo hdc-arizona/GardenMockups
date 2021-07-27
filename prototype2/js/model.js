@@ -121,7 +121,7 @@ class Model {
      * The horizontal direction will be of increasing first variable, and the vertical direction will 
      * be of increasing second variable
      * 
-     * For example, min1=white, max1=red, min2=white, max2=blue
+     * For example, min=white, max1=red, max2=blue
      * The array will be [white, lightred, red, lightblue, lightblue+lightred, lightblue+red, blue, blue+lightred, blue+red]
      * The legend will look like:
      * blue - blue+lightred - blue+red
@@ -129,17 +129,16 @@ class Model {
      * white - lightred - red
      * @param {*} minColor
      * @param {*} maxColor
-     * @param {*} minColor2
      * @param {*} maxColor2
      */
-    interpolate(minColor1, maxColor1, minColor2, maxColor2) {
+    interpolate(minColor, maxColor1, maxColor2) {
         let colors = [];
 
         //colors for bottom row
-        var colors1 = this._interpolateHelper(minColor1, maxColor1, 3);
+        var colors1 = this._interpolateHelper(minColor, maxColor1, 3);
 
         //colors for leftmost column
-        var colors2 = this._interpolateHelper(minColor2, maxColor2, 3);
+        var colors2 = this._interpolateHelper(minColor, maxColor2, 3);
 
         // midde color of middle row
         var colors3 = this._interpolateHelper(colors1[1], colors2[1], 3);

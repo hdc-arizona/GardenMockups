@@ -1,10 +1,9 @@
 class ViewModel {
     constructor() {
         this.model = new Model();
-        this.colors = this.model.interpolate('white', 'red', 'white', 'blue');
+        this.colors = this.model.interpolate('rgb(220,208,255)', 'red', 'blue');
         // the two colors passed into this function will be the two end colors of the legend
         // and map illustration (shows the greatest and lowest level)
-
         try {
             this.model.fetchVariables();
         } catch (error) {
@@ -300,8 +299,19 @@ class ViewModel {
         if (old_geojson !== null) {
             map.removeLayer(old_geojson);
         }
+
+        var now = new Date();
+        console.log("\n\nCURRENT TIME: " + now + "\n\nStart fetching from database after variable(s) are selected....");
+        var start1 = new Date();
+
         try {
             await this.model.fetchData(key, variableName, variableName2).then((response) => {
+                var end1 = new Date();
+                var duration1 = end1.getTime() - start1.getTime();
+                console.log("\nTime recorded: " + duration1 + " milliseconds\n");
+                var start2 = new Date();
+                console.log("\n\nStart rendering the map after variable(s) are selected.....");
+
                 let colorMapping = this.model.getColorMapping(colors, key);
                 let tractData = this.model.getTractData(key);
 
@@ -319,11 +329,37 @@ class ViewModel {
                 let onEachFeature = this._onEachFeature(highlightFeature, resetHighlight, zoomToFeature);
                 geojson = L.geoJson(censusBlockData, { style: style, onEachFeature: onEachFeature }).addTo(map);
                 this.model.setGeoJson(key, geojson);
+
+                var end2 = new Date();
+                var duration2 = end2.getTime() - start2.getTime();
+                var total = duration1 + duration2;
+                console.log("\nTime recorded: " + duration2 + " milliseconds\n");
+                console.log("\nTotal time elapsed after variable(s) are selected: " + total + " milliseconds\n");
                 return 1;
             });
 
         } catch (error) {
-            console.log("Could not load " + variableName + " + " + variableName2 + " data from scrutinizer");
+            var end = new Date();
+            var duration = end.getTime() - start1.getTime();
+            console.log("\nCould not load " + variableName + " + " + variableName2 + " data from scrutinizer");
+            console.log("\nTotal time elapsed after variable(s) are selected: " + duration + " milliseconds\n");
+            return -1;
+        }
+    }
+
+    /*
+    * Query the DB for a given variable without changing the map
+    * @param {*} key
+    * @param {*} variableName
+    */
+    async fetchVariable(key, variableName) {
+        try {
+            await this.model.fetchData(key, variableName, "").then((response) => {
+                console.log("Successfully fetch " + variableName + " data from scrutinizer"); 
+                return 1;
+            });
+        } catch (error) {
+            console.log("Could not load " + variableName + " data from scrutinizer");
             return -1;
         }
     }
